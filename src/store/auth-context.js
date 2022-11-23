@@ -17,7 +17,7 @@ export const AuthContextProvider = (props) => {
   const loginHandler = (data) => {
     localStorage.setItem("token", data.token);
     setUserIsLoggedIn(true);
-    setName(data.astrologer.full_name);
+    setName(data?.data?.username);
   };
 
   const logoutHandler = useCallback(() => {

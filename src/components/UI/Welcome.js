@@ -1,33 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import { Container, Button } from "@mui/material";
 import img from "../../image/background.jpg";
 import logo from "../../image/logo-tech.png";
 import AuthContext from "../../store/auth-context";
 import classes from "./Welcome.module.css";
+import { useGetAllDataQuery } from "../../store/apiSlice";
 
 const Welcome = () => {
   const authCtx = useContext(AuthContext);
 
   const [name, setName] = useState("");
+  const { data } = useGetAllDataQuery();
 
-  const authorization = async () => {
-    const response = await fetch(
-      "http://192.168.29.11:8080/api/v1/astrologer/profile",
-      {
-        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-      }
-    );
+  console.log("i want data", data);
 
-    const data = await response.json();
+  // const authorization = async () => {
+  //   const response = await fetch(
+  //     "http://192.168.29.11:8081/api/v1/astrologer/profile",
+  //     {
+  //       headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+  //     }
+  //   );
 
-    setName(data?.data?.full_name);
+  //   const data = await response.json();
 
-    console.log(data);
-  };
+  //   setName(data?.data?.username);
 
-  useEffect(() => {
-    if (!authCtx.userName) authorization();
-  }, []); // eslint-disable-line
+  //   console.log(data);
+  // };
+
+  // useEffect(() => {
+  //   if (!authCtx.userName) authorization();
+  // }, []); // eslint-disable-line
 
   return (
     <header>
@@ -60,7 +65,7 @@ const Welcome = () => {
           height: "100vh",
         }}
       >
-        <h1>Hello, {authCtx.userName || name}</h1>
+        <h1>Hello, {data?.data?.username}</h1>
       </div>
     </header>
   );

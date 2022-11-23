@@ -7,6 +7,10 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import SignUp from "./SignUp";
 import AuthContext from "../../store/auth-context";
 import classes from "./LoginForm.module.css";
+import {
+  useGetAllDataQuery,
+  useVerifyDataMutation,
+} from "../../store/apiSlice";
 
 // http://192.168.29.10:8080/api/v1/astro-login
 // http://192.168.29.10:8080/api/v1/astrologers/profile
@@ -22,6 +26,7 @@ const LoginForm = () => {
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
   const authCtx = useContext(AuthContext);
+  const [verifyData] = useVerifyDataMutation();
 
   const emailValue = (e) => {
     setEmail(e.target.value);
@@ -37,10 +42,11 @@ const LoginForm = () => {
     if (!email.length) {
       setIsEmailError(true);
       setEmailErrorMessage("email is required");
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-      setIsEmailError(true);
-      setEmailErrorMessage("enter valid email");
     }
+    // else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+    //   setIsEmailError(true);
+    //   setEmailErrorMessage("enter valid email");
+    // }
   };
 
   const passwordHandler = () => {
@@ -61,6 +67,8 @@ const LoginForm = () => {
     return <SignUp openLogin={openSignupPage} />;
   }
 
+  const loginData = { username: email, password: password };
+
   const submitHandler = async (event) => {
     event.preventDefault();
     if (!email) {
@@ -73,25 +81,29 @@ const LoginForm = () => {
     }
 
     if (email && password) {
-      const response = await fetch(
-        "http://192.168.29.11:8080/api/v1/astro-login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            user_email: email,
-            user_password: password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      if (!response.ok) {
-        throw new Error(data.message);
+      const { data } = await verifyData(loginData);
+
+      console.log("data ", data);
+
+      if (data?.status === "success") {
+        authCtx.login(data?.data);
       }
 
-      authCtx.login(data.data);
+      // const response = await fetch("https://jayapi.oscod.dev/login", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     username: email,
+      //     password: password,
+      //   }),
+      //   headers: { "Content-Type": "application/json" },
+      // });
+      // const data = await response.json();
       // console.log(data);
+      // if (!response.ok) {
+      //   throw new Error(data.message);
+      // }
+      // authCtx.login(data.data);
+      // // console.log(data);
     }
   };
 
@@ -112,7 +124,7 @@ const LoginForm = () => {
             id="email"
             label="Email Address"
             name="email"
-            type="email"
+            type="text"
             autoComplete="email"
             onBlur={emailHandler}
             onChange={emailValue}
