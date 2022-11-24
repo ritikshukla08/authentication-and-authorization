@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const productsApi = createApi({
   reducerPath: "productsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://jayapi.oscod.dev/",
+    baseUrl: "",
   }),
   tagTypes: ["Login"],
   endpoints: (builder) => ({
@@ -23,7 +23,16 @@ export const productsApi = createApi({
       }),
       invalidatesTags: ["Login"],
     }),
+    signUp: builder.mutation({
+      query: (signupData) => ({
+        url: "/signup",
+        method: "POST",
+        body: signupData,
+      }),
+      invalidatesTags: ["Login"],
+    }),
   }),
 });
 
-export const { useGetAllDataQuery, useVerifyDataMutation } = productsApi;
+export const { useGetAllDataQuery, useVerifyDataMutation, useSignUpMutation } =
+  productsApi;

@@ -7,30 +7,23 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import SignUp from "./SignUp";
 import AuthContext from "../../store/auth-context";
 import classes from "./LoginForm.module.css";
-import {
-  useGetAllDataQuery,
-  useVerifyDataMutation,
-} from "../../store/apiSlice";
-
-// http://192.168.29.10:8080/api/v1/astro-login
-// http://192.168.29.10:8080/api/v1/astrologers/profile
-// hardikpriyankar@gmail.com
+import { useVerifyDataMutation } from "../../store/apiSlice";
 
 const LoginForm = () => {
   const [signup, setSignup] = useState(false);
   const [pswdToggle, setPswdToggle] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isEmailError, setIsEmailError] = useState(false);
+  const [isUsernameError, setIsUsernameError] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
 
   const authCtx = useContext(AuthContext);
   const [verifyData] = useVerifyDataMutation();
 
-  const emailValue = (e) => {
-    setEmail(e.target.value);
-    setIsEmailError(false);
+  const usernameValue = (e) => {
+    setUsername(e.target.value);
+    setIsUsernameError(false);
   };
 
   const passwordValue = (e) => {
@@ -38,15 +31,11 @@ const LoginForm = () => {
     setIsPasswordError(false);
   };
 
-  const emailHandler = () => {
-    if (!email.length) {
-      setIsEmailError(true);
-      setEmailErrorMessage("email is required");
+  const usernameHandler = () => {
+    if (!username.length) {
+      setIsUsernameError(true);
+      setUsernameErrorMessage("Username is required");
     }
-    // else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-    //   setIsEmailError(true);
-    //   setEmailErrorMessage("enter valid email");
-    // }
   };
 
   const passwordHandler = () => {
@@ -67,20 +56,20 @@ const LoginForm = () => {
     return <SignUp openLogin={openSignupPage} />;
   }
 
-  const loginData = { username: email, password: password };
+  const loginData = { username, password };
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    if (!email) {
-      setIsEmailError(true);
-      setEmailErrorMessage("email is required");
+    if (!username) {
+      setIsUsernameError(true);
+      setUsernameErrorMessage("Username is required");
     }
 
     if (!password) {
       setIsPasswordError(true);
     }
 
-    if (email && password) {
+    if (username && password) {
       const { data } = await verifyData(loginData);
 
       console.log("data ", data);
@@ -88,22 +77,6 @@ const LoginForm = () => {
       if (data?.status === "success") {
         authCtx.login(data?.data);
       }
-
-      // const response = await fetch("https://jayapi.oscod.dev/login", {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     username: email,
-      //     password: password,
-      //   }),
-      //   headers: { "Content-Type": "application/json" },
-      // });
-      // const data = await response.json();
-      // console.log(data);
-      // if (!response.ok) {
-      //   throw new Error(data.message);
-      // }
-      // authCtx.login(data.data);
-      // // console.log(data);
     }
   };
 
@@ -121,16 +94,16 @@ const LoginForm = () => {
           <TextField
             margin="normal"
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
+            id="username"
+            label="Username"
+            name="username"
             type="text"
-            autoComplete="email"
-            onBlur={emailHandler}
-            onChange={emailValue}
-            error={isEmailError}
-            helperText={isEmailError && emailErrorMessage}
-            value={email}
+            autoComplete="username"
+            onBlur={usernameHandler}
+            onChange={usernameValue}
+            error={isUsernameError}
+            helperText={isUsernameError && usernameErrorMessage}
+            value={username}
           />
           <FormControl fullWidth>
             <TextField
@@ -138,7 +111,7 @@ const LoginForm = () => {
               fullWidth
               type={pswdToggle ? "text" : "password"}
               id="password"
-              label="password"
+              label="Password"
               onBlur={passwordHandler}
               onChange={passwordValue}
               name="password"

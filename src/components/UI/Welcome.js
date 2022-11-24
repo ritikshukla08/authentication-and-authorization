@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { Container, Button } from "@mui/material";
 import img from "../../image/background.jpg";
@@ -14,25 +14,6 @@ const Welcome = () => {
   const { data } = useGetAllDataQuery();
 
   console.log("i want data", data);
-
-  // const authorization = async () => {
-  //   const response = await fetch(
-  //     "http://192.168.29.11:8081/api/v1/astrologer/profile",
-  //     {
-  //       headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  //     }
-  //   );
-
-  //   const data = await response.json();
-
-  //   setName(data?.data?.username);
-
-  //   console.log(data);
-  // };
-
-  // useEffect(() => {
-  //   if (!authCtx.userName) authorization();
-  // }, []); // eslint-disable-line
 
   return (
     <header>
